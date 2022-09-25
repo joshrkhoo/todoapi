@@ -14,7 +14,7 @@ export const DynamoDocumentClientCreator = () => {
 
   const translateConfig: TranslateConfig = {
     marshallOptions: {
-
+      removeUndefinedValues: true
     },
     unmarshallOptions: {
 

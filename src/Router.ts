@@ -32,7 +32,9 @@ const routerFactory = (): express.Router => {
    * Add/edit a todo
    */
   const putTodo = async (req, res, next) => {
-    const todo: Todo = req.body
+    const { title, description, dueDate, tag, priority, status } = req.body
+
+    const todo: Todo = { title, description, dueDate, tag, priority, status }
 
     if (!todo.description) res.status(400).json('Please include a description')
 
