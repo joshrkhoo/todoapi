@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import express from "express";
 import { TodoClient } from "./client/TodoClient";
 import { Todo } from "./types";
@@ -29,9 +30,27 @@ const routerFactory = (): express.Router => {
   })
 
   /**
-   * Add/edit a todo
+   * Edit a todo
    */
-  const putTodo = async (req, res, next) => {
+  router.patch('/:todoid', async (req, res, next) => {
+    const { title, description, dueDate, tag, priority, status } = req.body
+
+    let todo: Todo = { title, description, dueDate, tag, priority, status }
+    todo = Object.fromEntries(Object.entries(todo).filter(([_, v]) => v != null))
+    const todoid = req.params.todoid
+    todo.userid = userid
+    todo.todoid = todoid
+
+    console.log(todo)
+
+    await client.patchTodo(todo)
+    res.sendStatus(200)
+  })
+
+  /**
+   * Add a todo
+   */
+  router.post('/', async (req, res, next) => {
     const { title, description, dueDate, tag, priority, status } = req.body
 
     const todo: Todo = { title, description, dueDate, tag, priority, status }
@@ -39,13 +58,12 @@ const routerFactory = (): express.Router => {
     if (!todo.description) res.status(400).json('Please include a description')
 
     todo.userid = userid
+    todo.todoid = randomUUID();
     todo.createdDate = new Date().toISOString()
 
     await client.putTodo(todo)
     res.sendStatus(201)
-  }
-  router.put('/', putTodo)
-  router.post('/', putTodo)
+  })
 
   /**
    * Delete todo

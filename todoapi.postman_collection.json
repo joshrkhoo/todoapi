@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"wake up decently early\"\n}",
+					"raw": "{\n    \"description\": \"hello world\",\n    \"title\": \"bruh\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -49,12 +49,38 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/",
+					"raw": "{{host}}/1e03037f-a87f-407b-9ba8-b220115a12c4",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						""
+						"1e03037f-a87f-407b-9ba8-b220115a12c4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Todo",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"buy 121212 eggs\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/d6dd95b2-9fbe-4eea-8163-eee8fdde409e",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"d6dd95b2-9fbe-4eea-8163-eee8fdde409e"
 					]
 				}
 			},

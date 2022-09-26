@@ -1,5 +1,5 @@
 import { DeleteItemCommand } from "@aws-sdk/client-dynamodb"
-import { GetCommand, PutCommand, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb"
+import { GetCommand, PutCommand, QueryCommand, QueryCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb"
 import { randomUUID } from "crypto"
 import { BadRequestError } from "../Error"
 import { Todo } from "../types"
@@ -20,6 +20,24 @@ import { DynamoDocumentClient } from "./DynamoDB"
  * Status
  * Tag
  */
+
+const generateExpressionsFromItem= (item) => {
+  console.log(item)
+  let UpdateExpression = 'set';
+
+  let ExpressionAttributeNames = {};
+  let ExpressionAttributeValues = {};
+
+  for (const property in item) {
+    UpdateExpression += ` #${property} = :${property} ,`;
+    ExpressionAttributeNames['#' + property] = property;
+    ExpressionAttributeValues[':' + property] = item[property];
+  }
+  UpdateExpression = UpdateExpression.slice(0, -1);
+
+  return { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
+}
+
 
 /**
  * TodoClient
@@ -67,18 +85,35 @@ export class TodoClient {
   }
 
   /**
-   * Adds/edits todo
+   * Adds/replaces todo
    * 
    * @param todo 
    * @pre todo must have userid
    */
   async putTodo(todo: Todo): Promise<void> {
     if (!todo.userid) throw new BadRequestError('give userid')
-    todo.todoid = randomUUID();
+    if (!todo.todoid) throw new BadRequestError('give todoid')
 
     await DynamoDocumentClient.send(new PutCommand({
       TableName: this.table,
       Item: todo
+    }))
+  }
+
+  async patchTodo(todo: Todo): Promise<void> {
+    if (!todo.userid) throw new BadRequestError('give userid')
+    if (!todo.todoid) throw new BadRequestError('give todoid')
+
+    const userid = todo.userid;
+    const todoid = todo.todoid;
+
+    delete todo.todoid;
+    delete todo.userid
+
+    await DynamoDocumentClient.send(new UpdateCommand({
+      ...generateExpressionsFromItem(todo),
+      TableName: this.table,
+      Key: { userid, todoid }
     }))
   }
 
