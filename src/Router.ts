@@ -1,7 +1,13 @@
 import { randomUUID } from "crypto";
 import express from "express";
 import { TodoClient } from "./client/TodoClient";
-import { Todo } from "./types";
+import { Todo, TodoStatus } from "./types";
+
+const checkTodoStatus = (todo: Todo): void => {
+  if (!Object.values(TodoStatus).includes(todo.status)) {
+    delete todo.status
+  }
+}
 
 const routerFactory = (): express.Router => {
   const router = express.Router()
@@ -37,6 +43,7 @@ const routerFactory = (): express.Router => {
 
     let todo: Todo = { title, description, dueDate, tag, priority, status }
     todo = Object.fromEntries(Object.entries(todo).filter(([_, v]) => v != null))
+    checkTodoStatus(todo)
     const todoid = req.params.todoid
     todo.userid = userid
     todo.todoid = todoid
@@ -56,6 +63,7 @@ const routerFactory = (): express.Router => {
     const todo: Todo = { title, description, dueDate, tag, priority, status }
 
     if (!todo.description) res.status(400).json('Please include a description')
+    checkTodoStatus(todo)
 
     todo.userid = userid
     todo.todoid = randomUUID();

@@ -23,4 +23,9 @@ export type Todo = {
   status?: TodoStatus;
 }
 
-export type TodoStatus = "READY" | "IN_PROGRESS" | "BLOCKED" | "DONE";
+export enum TodoStatus {
+  READY = "READY",
+  IN_PROGRESS = "IN_PROGRESS",
+  BLOCKED = "BLOCKED",
+  DONE = "DONE"
+}
