@@ -37,32 +37,32 @@ Resources:
           Properties:
             ApiId: !Ref ExpressApi
 
-  MyApiCertificate:
-    Type: 'AWS::CertificateManager::Certificate'
-    Condition: UseDomainName
-    Properties:
-      DomainName: !Sub '*.${DomainName}'
-      DomainValidationOptions:
-        - DomainName: !Sub '*.${DomainName}'
-          ValidationDomain: !Ref DomainName
-      SubjectAlternativeNames:
-        - !Ref DomainName
+  # MyApiCertificate:
+  #   Type: 'AWS::CertificateManager::Certificate'
+  #   Condition: UseDomainName
+  #   Properties:
+  #     DomainName: !Sub '*.${DomainName}'
+  #     DomainValidationOptions:
+  #       - DomainName: !Sub '*.${DomainName}'
+  #         ValidationDomain: !Ref DomainName
+  #     SubjectAlternativeNames:
+  #       - !Ref DomainName
 
-  MyApiDomainName:
-    Type: 'AWS::ApiGateway::DomainName'
-    Condition: UseDomainName
-    Properties:
-      CertificateArn: !Ref MyApiCertificate
-      DomainName: !Ref DomainName
+  # MyApiDomainName:
+  #   Type: 'AWS::ApiGateway::DomainName'
+  #   Condition: UseDomainName
+  #   Properties:
+  #     CertificateArn: !Ref MyApiCertificate
+  #     DomainName: !Ref DomainName
 
-  MyApiBasePathMapping:
-    Type: 'AWS::ApiGateway::BasePathMapping'
-    Condition: UseDomainName
-    Properties:
-      RestApiId: !Ref ExpressApi
-      DomainName: !Ref MyApiDomainName
-      BasePath: '(none)'
-      Stage: prod
+  # MyApiBasePathMapping:
+  #   Type: 'AWS::ApiGateway::BasePathMapping'
+  #   Condition: UseDomainName
+  #   Properties:
+  #     RestApiId: !Ref ExpressApi
+  #     DomainName: !Ref MyApiDomainName
+  #     BasePath: '(none)'
+  #     Stage: prod
 
   # Route53HostedZone:
   #   Type: AWS::Route53::HostedZone

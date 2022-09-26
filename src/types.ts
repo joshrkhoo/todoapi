@@ -23,6 +23,9 @@ export type Todo = {
   status?: TodoStatus;
 }
 
+/**
+ * Possible statuses of a todo
+ */
 export enum TodoStatus {
   READY = "READY",
   IN_PROGRESS = "IN_PROGRESS",
