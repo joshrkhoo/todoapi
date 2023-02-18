@@ -1,7 +1,7 @@
-import { DeleteItemCommand } from "@aws-sdk/client-dynamodb"
+import { ConditionalCheckFailedException, DeleteItemCommand } from "@aws-sdk/client-dynamodb"
 import { GetCommand, PutCommand, QueryCommand, QueryCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb"
 import { randomUUID } from "crypto"
-import { BadRequestError } from "../Error"
+import { BadRequestError, StatusType } from "../Error"
 import { Todo } from "../types"
 import { DynamoDocumentClient } from "./DynamoDB"
 
@@ -107,14 +107,27 @@ export class TodoClient {
     const userid = todo.userid;
     const todoid = todo.todoid;
 
-    delete todo.todoid;
     delete todo.userid
+    delete todo.todoid
 
-    await DynamoDocumentClient.send(new UpdateCommand({
-      ...generateExpressionsFromItem(todo),
-      TableName: this.table,
-      Key: { userid, todoid }
-    }))
+    const expressions = generateExpressionsFromItem(todo)
+    expressions.ExpressionAttributeValues[':todoid'] = todoid
+
+    console.log(expressions.ExpressionAttributeValues[':todoid'])
+
+    try {
+      await DynamoDocumentClient.send(new UpdateCommand({
+        ...expressions,
+        TableName: this.table,
+        Key: { userid, todoid },
+        ConditionExpression: 'todoid = :todoid'
+      }))
+    } catch(error) {
+      if (error instanceof ConditionalCheckFailedException) {
+        throw new BadRequestError()
+      }
+      throw error;
+    }
   }
 
   /**

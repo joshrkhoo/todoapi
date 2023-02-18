@@ -27,6 +27,15 @@ if (process.env.NODE_ENV !== 'production') {
 import { Router } from './Router';
 const app = express()
 
+import cors from 'cors'
+const originList = [
+  'http://localhost:3000',
+  'http://joshrkhoo-todo-app.s3-website-ap-southeast-2.amazonaws.com'
+]
+app.use(cors({
+  origin: originList
+}));
+
 app.use(express.json())
 
 app.use((req, res, next) => {

@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import express from "express";
 import { TodoClient } from "./client/TodoClient";
+import { BadRequestError } from "./Error";
 import { Todo, TodoStatus } from "./types";
 
 const checkTodoStatus = (todo: Todo): void => {
@@ -49,8 +50,16 @@ const routerFactory = (): express.Router => {
     todo.todoid = todoid
 
     console.log(todo)
-
-    await client.patchTodo(todo)
+    try {
+      await client.patchTodo(todo)
+    }
+    catch (error) {
+      if (error instanceof BadRequestError) {
+        res.sendStatus(400)
+        return
+      }
+      res.sendStatus(500)
+    }
     res.sendStatus(200)
   })
 
