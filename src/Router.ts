@@ -16,28 +16,42 @@ const routerFactory = (): express.Router => {
 
   const userid = 'joshua'
 
-  /**
-   * Gets a specific todo 
+  /*
+          Gets a specific todo 
    */
+
+  // Sets up the route - 'GET' http method
+  // '/:todoid' is the path of the URL
+    // :todoid is the id of the specific todo item (think of it as the server /mnt, then do access a specific thing in it we would do /mnt:anime or whatever)
   router.get('/:todoid', async (req, res, next) => {
+
+    // extracts the todoid value from the route parameters
+      // a todoid is a specific id for a todo item
     const { todoid } = req.params;
 
+    // 
     const todo: Todo = await client.getTodo(userid, todoid)
 
+    // this is the response to the request being made by the user 
+      // here the todo object is sent as a JSON response
     res.json(todo)
   })
 
-  /**
-   * Gets all todos
+
+
+
+  /*
+           Gets all todos
    */
+  
   router.get('/', async (req, res, next) => {
     const todos: Todo[] = await client.getTodos(userid)
 
     res.json(todos)
   })
 
-  /**
-   * Edit a todo
+  /*
+             Edit a todo
    */
   router.patch('/:todoid', async (req, res, next) => {
     const { title, description, dueDate, tag, priority, status } = req.body

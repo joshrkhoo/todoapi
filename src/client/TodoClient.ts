@@ -53,6 +53,9 @@ export class TodoClient {
    * Gets todo for a user
    * @param userid that we are getting todo data for
    */
+  
+  // This function gets all the todos for a specific userid 
+    // The promise is an array of todo items (this is because we want to get all todos created by this user) 
   async getTodos(userid: string): Promise<Todo[]> {
     if (!userid) throw new BadRequestError('give userid')
 
@@ -73,14 +76,27 @@ export class TodoClient {
    * @param userid
    * @param todoid 
    */
+
+  // this function gets the todo of a specific id
+    // the promise is a single Todo object (what we should retrieve from the DynamoDB and return)
   async getTodo(userid: string, todoid: string): Promise<Todo> {
+
+    // if userid does not exist then throw error and request for it
     if (!userid) throw new BadRequestError('give userid')
+    // if todoid does not exist then throw error and request for it
     if (!todoid) throw new BadRequestError('give todoid')
 
+    // calls the AWS DynamoDB and uses the send method to fetch an item from the DynamoDB table
     const response = await DynamoDocumentClient.send(new GetCommand({
+      // this is the name of the DynamoDB table where the todo item is stored 
       TableName: this.table,
+      // this is the primary key of the item to be fetched 
+        // userid is the partition key and todoid is the sortkey
       Key: { userid, todoid }
     }))
+
+    // here we return the item retrieved from the db as a Todo object
+      // once this is done we return to the function that called this function - router.ts file
     return response.Item as Todo
   }
 
